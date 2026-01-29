@@ -46,15 +46,16 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware'
+    "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
 CSRF_TRUSTED_ORIGINS = []
 
 if RAILWAY_DOMAIN:
@@ -84,19 +85,24 @@ WSGI_APPLICATION = 'orcamento.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-  "default": {
-    "ENGINE": "django.db.backends.postgresql",
-    "NAME": os.environ.get("DB_NAME"),
-    "USER": os.environ.get("DB_USER"),
-    "PASSWORD": os.environ.get("DB_PASSWORD"),
-    "HOST": os.environ.get("DB_HOST"),
-    "PORT": os.environ.get("DB_PORT", "5432"),
-    "OPTIONS": {
-      "sslmode": os.environ.get("DB_SSLMODE", "require"),
-    },
-  }
-}
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+
 
 
 
@@ -151,7 +157,6 @@ ADMIN_SITE_TITLE = "Administração"
 ADMIN_INDEX_TITLE = "Painel do Sistema"
 
 JAZZMIN_SETTINGS = {
-
     "site_title": "Administração",
     "site_header": "Sistema de Orçamentos",
     "site_brand": "Orçamento Fácil",
@@ -159,30 +164,24 @@ JAZZMIN_SETTINGS = {
     "show_sidebar": True,
     "navigation_expanded": True,
 
-    "hide_models": ["auth.group"],  # <- some "Groups"
-
     "icons": {
-    "auth.user": "fas fa-user",
-    "auth.group": "fas fa-users",
-    "crm.customer": "fas fa-user-tag",
-    "catalog.catalogitem": "fas fa-box",
-    "quotes.quote": "fas fa-file-invoice-dollar",
-    "quotes.quoteline": "fas fa-list",
-},
+        "auth.user": "fas fa-user",
+        "auth.group": "fas fa-users",
+        "crm.customer": "fas fa-user-tag",
+        "catalog.catalogitem": "fas fa-box",
+        "quotes.quote": "fas fa-file-invoice-dollar",
+        "quotes.quoteline": "fas fa-list",
+    },
 
     "hide_models": ["auth.group"],
-
     "order_with_respect_to": ["quotes", "crm", "catalog", "auth"],
-    
+
     "topmenu_links": [
-    {"name": "Início", "url": "admin:index", "permissions": ["auth.view_user"]},
-    {"name": "Novo Cliente", "url": "/admin/crm/customer/add/"},
-    {"name": "Novo Item", "url": "/admin/catalog/catalogitem/add/"},
-    {"name": "Novo Orçamento", "url": "/admin/quotes/quote/add/"},
-],
-
-
-
+        {"name": "Início", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Novo Cliente", "url": "/admin/crm/customer/add/"},
+        {"name": "Novo Item", "url": "/admin/catalog/catalogitem/add/"},
+        {"name": "Novo Orçamento", "url": "/admin/quotes/quote/add/"},
+    ],
 }
 
 
